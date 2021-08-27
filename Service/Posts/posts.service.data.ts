@@ -7,6 +7,8 @@ import UserDevice from '../../Models/Users.Device.model';
 import tokenCreator from '../Users/utils/create.new.token';
 import functionHelpers from '../Users/utils/user.service.helpers';
 import searchLikeDislikeUser from './utils/searchLikeDislike';
+import updateCountComments from './utils/updateCountComments';
+import updateCountLikes from './utils/updateCountLikes';
 
 @injectable()
 class PostService implements Posts {
@@ -22,7 +24,6 @@ class PostService implements Posts {
   ) :Promise<any> {
     const newToken = tokenCreator.newTokenCreater(username);
     await UserDevice.update({ token: newToken }, { where: { token } });
-    const timeInMs = Date.now();
 
     const bodyCreateNewPost = {
       title,
@@ -31,8 +32,6 @@ class PostService implements Posts {
       phoneEmail: username,
       countLikes: 0,
       countComments: 0,
-      creationTime: timeInMs.toString(),
-      updateTime: timeInMs.toString(),
     };
     const resultCreateNewPost = {
       bodyCreateNewPost,
@@ -45,11 +44,10 @@ class PostService implements Posts {
   async serviceGetPosts(page: number, sort: string): Promise<any> {
     const startIdPost: number = (page - 1) * 15;
     if (sort === 'standard') {
-      const posts = await Post.findAll({
+      return Post.findAll({
         offset: startIdPost,
         limit: 15,
       });
-      return posts;
     }
 
     const posts = await Post.findAll({
@@ -57,7 +55,7 @@ class PostService implements Posts {
       limit: 15,
       order: [['id', 'DESC']],
     });
-    return posts;
+    return { posts };
   }
 
   async serviceNewComment(
@@ -74,11 +72,9 @@ class PostService implements Posts {
       phoneEmail: username,
       idToDo: id.toString(),
       bodyComment: comment,
-      creationTime: Date.now().toString(),
-      updateTime: Date.now().toString(),
     };
     await Comments.create(createNewComment);
-
+    await updateCountComments(1, id);
     return {
       createNewComment,
       success: 'comment create',
@@ -106,6 +102,7 @@ class PostService implements Posts {
           phoneEmail, typeActionPostComment, idPostComment: idPostComment.toString(), likeDislike,
         },
       });
+      await updateCountLikes(-1, idPostComment);
       return { true: `${likeDislike} exists and be deleted`, newToken };
     }
     const createNewLIke = {
@@ -115,6 +112,7 @@ class PostService implements Posts {
       likeDislike,
     };
     await Likes.create(createNewLIke);
+    await updateCountLikes(1, idPostComment);
     return { true: `${likeDislike} create`, newToken };
   }
 
@@ -125,7 +123,36 @@ class PostService implements Posts {
     await Post.destroy({ where: { id: postId } });
     const username = await functionHelpers.searchUserService(token);
     const newToken = tokenCreator.newTokenCreater(username);
+    await UserDevice.update({ token: newToken }, { where: { token } });
+
     return { status: 'true', newToken };
+  }
+
+  async serviceDeleteComment(
+    token: string,
+    commentId: number,
+  ): Promise<any> {
+    await Comments.destroy({ where: { idToDo: commentId.toString() } });
+    const username = await functionHelpers.searchUserService(token);
+    const newToken = tokenCreator.newTokenCreater(username);
+    await UserDevice.update({ token: newToken }, { where: { token } });
+
+    await updateCountComments(-1, commentId);
+    return { status: 'true', newToken };
+  }
+
+  async serviceGetPostsId(postId: number): Promise<any> {
+    const post = await Post.findAll({
+      where: { id: postId },
+    });
+    const likes = await Likes.findAll({
+      where: { idPostComment: postId.toString() },
+    });
+    const comments = await Comments.findAll({
+      where: { idToDo: postId.toString() },
+    });
+
+    return { post, likes, comments };
   }
 }
 

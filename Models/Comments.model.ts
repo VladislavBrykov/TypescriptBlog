@@ -20,14 +20,6 @@ Comments.init({
     type: DataTypes.STRING,
     unique: false,
   },
-  creationTime: {
-    type: DataTypes.STRING,
-    unique: false,
-  },
-  updateTime: {
-    type: DataTypes.STRING,
-    unique: false,
-  },
 }, {
   sequelize,
   modelName: 'comments',

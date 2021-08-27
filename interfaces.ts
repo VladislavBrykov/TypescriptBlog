@@ -16,6 +16,8 @@ export interface Posts {
     ): Promise<any>;
 
     serviceGetPosts(page: number, sort:string): Promise<any>;
+    serviceGetPostsId(postId: number): Promise<any>;
+
     serviceNewComment(
       typeAction: string,
       id: number,
@@ -32,5 +34,5 @@ export interface Posts {
     ): Promise<any>;
 
     serviceDeletePost(token: string, postId: number): Promise<any>;
-
+    serviceDeleteComment(token: string, commentId: number): Promise<any>;
 }

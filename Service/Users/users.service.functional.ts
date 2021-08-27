@@ -90,7 +90,7 @@ class UserService implements Users {
     token: string,
   ) :Promise<any> {
     const searchUser = User.findOne({ where: { phoneEmail, password } });
-
+    console.log('----------------------', newPassword);
     if (searchUser) {
       const newToken = tokenCreator.newTokenCreater(phoneEmail);
       await User.update({ password: newPassword }, { where: { phoneEmail } });

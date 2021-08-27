@@ -1,8 +1,8 @@
 import { Container } from 'inversify';
 import { TYPES } from './types';
 import { Users, Posts } from './interfaces';
-import UserService from './Service/Users/users.servece.functional';
-import PostService from './Service/Posts/posts.servece.data';
+import UserService from './Service/Users/users.service.functional';
+import PostService from './Service/Posts/posts.service.data';
 
 const myContainer = new Container();
 myContainer.bind<Users>(TYPES.Users).to(UserService);

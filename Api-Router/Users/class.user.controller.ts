@@ -4,7 +4,7 @@ import { TYPES } from '../../types';
 import 'reflect-metadata';
 import sequelize from '../../Config/database';
 import functionHelpers from '../../Service/Users/utils/user.service.helpers';
-import UserService from '../../Service/Users/users.servece.functional';
+import UserService from '../../Service/Users/users.service.functional';
 
 import {
   authorizationValidator,
