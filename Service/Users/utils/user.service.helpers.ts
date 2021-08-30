@@ -38,6 +38,7 @@ async function searchUserService(token: string) {
   return false;
 }
 
+// service
 async function searchUserTable(phoneEmail: string) {
   const searchUser = await User.findOne({ where: { phoneEmail } });
   return (searchUser || false);

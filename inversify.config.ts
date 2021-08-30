@@ -8,4 +8,8 @@ const myContainer = new Container();
 myContainer.bind<Users>(TYPES.Users).to(UserService);
 myContainer.bind<Posts>(TYPES.Posts).to(PostService);
 
+const userService = myContainer.get<Users>(TYPES.Users);
+
+userService.blablabla
+
 export { myContainer };

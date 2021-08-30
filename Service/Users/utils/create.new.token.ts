@@ -3,9 +3,7 @@ import allConstantsUsedInProject from '../../../Helpers/all.constants.used.in.pr
 
 function newTokenCreater(phoneEmail): string {
   return jwt.sign({
-    exp: Math.floor(Date.now()
-      / allConstantsUsedInProject.ms)
-      + allConstantsUsedInProject.tenMin,
+    exp: Math.floor(Date.now() / allConstantsUsedInProject.ms) + allConstantsUsedInProject.tenMin,
     phoneEmail,
   }, allConstantsUsedInProject.secretKey);
 }

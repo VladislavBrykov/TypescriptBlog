@@ -1,11 +1,9 @@
-const ms = 1000;
-const tenMin = 600;
-const secretKey = '4444';
+const MS = 1000;
+const TOKEN_TTL  = 60 * 10;
+const SECRET_KEY = '4444';
 
-const allConstantsUsedInProject = {
-  ms,
-  tenMin,
-  secretKey,
+export default {
+  MS,
+  TOKEN_TTL,
+  SECRET_KEY,
 };
-
-export default allConstantsUsedInProject;

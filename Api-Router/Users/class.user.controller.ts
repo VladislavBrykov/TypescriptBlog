@@ -27,7 +27,7 @@ constructor(@inject(TYPES.Users) userService: UserService) {
       const { password, phoneEmail } = req.body;
 
       const incomingDataValid = await authorizationValidator(password, phoneEmail);
-      if (incomingDataValid.status === false) {
+      if (incomingDataValid.status) {
         return res.status(401).json({ error: incomingDataValid });
       }
       const resRegistration: any = await this._userService.serviceRegistration(
@@ -102,10 +102,10 @@ constructor(@inject(TYPES.Users) userService: UserService) {
         return res.status(401).json({ error: incomingDataValid });
       }
       if (await functionHelpers.searchUserService(token) === false) {
-        return res.status(405).json({ error: 'not enough rights' });
+        return res.status(403).json({ error: 'not enough rights' });
       }
 
-      const resLogin = await this._userService.servicePasswordUpdate(
+      const loginedUser = await this._userService.servicePasswordUpdate(
         phoneEmail,
         password,
         newPassword,

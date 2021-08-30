@@ -74,7 +74,7 @@ class UserService implements Users {
     return false;
   }
 
-  async serviceDeleteUserByAdmin(phoneEmail: string) :Promise<any> {
+  async serviceDeleteUserByAdmin(phoneEmail: string) :Promise<boolean> {
     if (await userRoot.userRootById(phoneEmail) === 'admin') {
       await UserDevice.destroy({ where: { phoneEmail } });
       await User.destroy({ where: { phoneEmail } });
@@ -99,6 +99,8 @@ class UserService implements Users {
       return { status: true, token: newToken };
     }
     return { status: false, error: 'password update error' };
+
+    // https://jsonapi.org/ for unified http responses style
   }
 }
 

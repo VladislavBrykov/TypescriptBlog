@@ -43,7 +43,7 @@ class PostService implements Posts {
 
   async serviceGetPosts(page: number, sort: string): Promise<any> {
     const startIdPost: number = (page - 1) * 15;
-    if (sort === 'standard') {
+    if (sort === 'ASC or DESC') {
       return Post.findAll({
         offset: startIdPost,
         limit: 15,
@@ -141,7 +141,10 @@ class PostService implements Posts {
     return { status: 'true', newToken };
   }
 
-  async serviceGetPostsId(postId: number): Promise<any> {
+  async getPostsById(postId: number): Promise<any> {
+
+    // // https://sequelize.org/master/manual/assocs.html
+    // use relations
     const post = await Post.findAll({
       where: { id: postId },
     });
@@ -152,7 +155,7 @@ class PostService implements Posts {
       where: { idToDo: postId.toString() },
     });
 
-    return { post, likes, comments };
+    return { post };
   }
 }
 

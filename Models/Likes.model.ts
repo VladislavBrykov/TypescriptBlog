@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../Config/database';
 
+// https://sequelize.org/master/manual/assocs.html
 class Likes extends Model {}
 
 Likes.init({

@@ -12,7 +12,7 @@ Comments.init({
     type: DataTypes.STRING,
     unique: false,
   },
-  idToDo: {
+  postId: {
     type: DataTypes.STRING,
     unique: false,
   },

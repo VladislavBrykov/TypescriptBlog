@@ -12,12 +12,21 @@ const classUserController = new UserController(userServices);
 const postServices = new PostsService();
 const classPostController = new PostController(postServices);
 
+
+const userRoutes = express.Router();
+
+userRoutes.delete('/email-verification', asyncFunctionWrapper(classUserController.deleteUser));
+
+
+apiRouter.use('/user', userRoutes);
+
+
 // Authorization
 apiRouter.post('/registration', asyncFunctionWrapper(classUserController.registration));
 apiRouter.post('/login', asyncFunctionWrapper(classUserController.login));
 apiRouter.get('/logout', asyncFunctionWrapper(classUserController.logout));
-apiRouter.delete('/delete-user', asyncFunctionWrapper(classUserController.deleteUser));
 apiRouter.post('/password-update', asyncFunctionWrapper(classUserController.passwordUpdate));
+
 apiRouter.post('/delete-user-by-admin', asyncFunctionWrapper(classUserController.deleteUserByAdmin));
 
 // Posts
