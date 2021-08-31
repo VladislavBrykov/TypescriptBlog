@@ -9,7 +9,6 @@ myContainer.bind<Users>(TYPES.Users).to(UserService);
 myContainer.bind<Posts>(TYPES.Posts).to(PostService);
 
 const userService = myContainer.get<Users>(TYPES.Users);
+const postService = myContainer.get<Posts>(TYPES.Posts);
 
-userService.blablabla
-
-export { myContainer };
+export = { myContainer, userService, postService };

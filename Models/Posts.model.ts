@@ -24,6 +24,10 @@ Post.init({
     type: DataTypes.STRING,
     unique: false,
   },
+  countDisLikes: {
+    type: DataTypes.STRING,
+    unique: false,
+  },
   countComments: {
     type: DataTypes.STRING,
     unique: false,

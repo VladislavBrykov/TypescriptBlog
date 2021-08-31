@@ -5,7 +5,7 @@ import Likes from '../../Models/Likes.model';
 import Post from '../../Models/Posts.model';
 import UserDevice from '../../Models/Users.Device.model';
 import tokenCreator from '../Users/utils/create.new.token';
-import functionHelpers from '../Users/utils/user.service.helpers';
+import functionHelpers from '../Users/utils/search.user.service';
 import searchLikeDislikeUser from './utils/searchLikeDislike';
 import updateCountComments from './utils/updateCountComments';
 import updateCountLikes from './utils/updateCountLikes';
@@ -22,7 +22,7 @@ class PostService implements Posts {
     image: string,
     username: string,
   ) :Promise<any> {
-    const newToken = tokenCreator.newTokenCreater(username);
+    const newToken = tokenCreator.newTokenCreator(username);
     await UserDevice.update({ token: newToken }, { where: { token } });
 
     const bodyCreateNewPost = {
@@ -31,6 +31,7 @@ class PostService implements Posts {
       image,
       phoneEmail: username,
       countLikes: 0,
+      countDisLikes: 0,
       countComments: 0,
     };
     const resultCreateNewPost = {
@@ -65,12 +66,12 @@ class PostService implements Posts {
     comment: string,
   ): Promise<any> {
     const username = await functionHelpers.searchUserService(token);
-    const newToken = tokenCreator.newTokenCreater(username);
+    const newToken = tokenCreator.newTokenCreator(username);
     await UserDevice.update({ token: newToken }, { where: { token } });
     const createNewComment = {
       typeAction,
       phoneEmail: username,
-      idToDo: id.toString(),
+      postId: id.toString(),
       bodyComment: comment,
     };
     await Comments.create(createNewComment);
@@ -89,7 +90,7 @@ class PostService implements Posts {
     phoneEmail: string,
     likeDislike: string,
   ): Promise<any> {
-    const newToken = tokenCreator.newTokenCreater(phoneEmail);
+    const newToken = tokenCreator.newTokenCreator(phoneEmail);
     await UserDevice.update({ token: newToken }, { where: { token } });
     if (!await searchLikeDislikeUser(
       idPostComment,
@@ -102,7 +103,7 @@ class PostService implements Posts {
           phoneEmail, typeActionPostComment, idPostComment: idPostComment.toString(), likeDislike,
         },
       });
-      await updateCountLikes(-1, idPostComment);
+      await updateCountLikes(-1, idPostComment, likeDislike);
       return { true: `${likeDislike} exists and be deleted`, newToken };
     }
     const createNewLIke = {
@@ -112,7 +113,7 @@ class PostService implements Posts {
       likeDislike,
     };
     await Likes.create(createNewLIke);
-    await updateCountLikes(1, idPostComment);
+    await updateCountLikes(1, idPostComment, likeDislike);
     return { true: `${likeDislike} create`, newToken };
   }
 
@@ -122,7 +123,7 @@ class PostService implements Posts {
   ): Promise<any> {
     await Post.destroy({ where: { id: postId } });
     const username = await functionHelpers.searchUserService(token);
-    const newToken = tokenCreator.newTokenCreater(username);
+    const newToken = tokenCreator.newTokenCreator(username);
     await UserDevice.update({ token: newToken }, { where: { token } });
 
     return { status: 'true', newToken };
@@ -134,28 +135,37 @@ class PostService implements Posts {
   ): Promise<any> {
     await Comments.destroy({ where: { idToDo: commentId.toString() } });
     const username = await functionHelpers.searchUserService(token);
-    const newToken = tokenCreator.newTokenCreater(username);
+    const newToken = tokenCreator.newTokenCreator(username);
     await UserDevice.update({ token: newToken }, { where: { token } });
 
     await updateCountComments(-1, commentId);
     return { status: 'true', newToken };
   }
 
-  async getPostsById(postId: number): Promise<any> {
-
-    // // https://sequelize.org/master/manual/assocs.html
-    // use relations
+  async getPostById(postId: number): Promise<any> {
     const post = await Post.findAll({
       where: { id: postId },
     });
+    return { post };
+  }
+
+  async getPostCommentsLikesById(postId: number): Promise<any> {
     const likes = await Likes.findAll({
-      where: { idPostComment: postId.toString() },
+      where: {
+        idPostComment: postId.toString() ,
+        likeDislike: 'like'
+      },
+    });
+    const dislikes = await Likes.findAll({
+      where: {
+        idPostComment: postId.toString() ,
+        likeDislike: 'dislike'
+      },
     });
     const comments = await Comments.findAll({
-      where: { idToDo: postId.toString() },
+      where: { postId: postId.toString() },
     });
-
-    return { post };
+    return { likes, dislikes, comments};
   }
 }
 

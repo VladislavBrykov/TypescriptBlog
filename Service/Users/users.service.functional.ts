@@ -17,7 +17,7 @@ class UserService implements Users {
     });
 
     if (searchUser) {
-      const newToken = tokenCreator.newTokenCreater(phoneEmail);
+      const newToken = tokenCreator.newTokenCreator(phoneEmail);
       const newDevice = {
         phoneEmail: searchUser.getDataValue('phoneEmail'),
         token: newToken,
@@ -33,7 +33,7 @@ class UserService implements Users {
 
   async serviceRegistration(phoneEmail: string, password: string) :Promise<any> {
     const typeId: string = ResTypeid(phoneEmail);
-    const newToken: string = tokenCreator.newTokenCreater(phoneEmail);
+    const newToken: string = tokenCreator.newTokenCreator(phoneEmail);
 
     const registrationUser = {
       phoneEmail,
@@ -50,7 +50,7 @@ class UserService implements Users {
     return true;
   }
 
-  async serviceLogout(token: string, all:any) :Promise<any> {
+  async serviceLogout(token: string, all: string ) :Promise<any> {
     const searchUser = await UserDevice.findOne({ where: { token } });
 
     if (all === 'true') {
@@ -90,9 +90,8 @@ class UserService implements Users {
     token: string,
   ) :Promise<any> {
     const searchUser = User.findOne({ where: { phoneEmail, password } });
-    console.log('----------------------', newPassword);
     if (searchUser) {
-      const newToken = tokenCreator.newTokenCreater(phoneEmail);
+      const newToken = tokenCreator.newTokenCreator(phoneEmail);
       await User.update({ password: newPassword }, { where: { phoneEmail } });
       await UserDevice.update({ token: newToken }, { where: { token } });
 

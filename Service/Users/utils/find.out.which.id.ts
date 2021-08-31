@@ -1,4 +1,3 @@
-
 const LOGIN_TYPE = {
   EMAIL: 'email',
   PHONE_NUMBER: 'phoneNumber'

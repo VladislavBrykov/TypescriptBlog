@@ -1,19 +1,19 @@
 import * as jwt from 'jsonwebtoken';
-import allConstantsUsedInProject from '../../../Helpers/all.constants.used.in.project';
+import allConstantsUsedInProject from '../../../Helpers/all.constants';
 
-function newTokenCreater(phoneEmail): string {
+function newTokenCreator(phoneEmail): string {
   return jwt.sign({
-    exp: Math.floor(Date.now() / allConstantsUsedInProject.ms) + allConstantsUsedInProject.tenMin,
+    exp: Math.floor(Date.now() / allConstantsUsedInProject.MS) + allConstantsUsedInProject.TOKEN_TTL,
     phoneEmail,
-  }, allConstantsUsedInProject.secretKey);
+  }, allConstantsUsedInProject.SECRET_KEY);
 }
 
 function tokenValidator(token) {
   try {
-    return jwt.verify(token, allConstantsUsedInProject.secretKey);
+    return jwt.verify(token, allConstantsUsedInProject.SECRET_KEY);
   } catch (error) {
     return null;
   }
 }
 
-export default { newTokenCreater, tokenValidator };
+export default { newTokenCreator, tokenValidator };

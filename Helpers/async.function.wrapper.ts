@@ -7,6 +7,3 @@ export const asyncFunctionWrapper = (callBack) => async (req, res) => {
   }
 };
 
-export default {
-  asyncFunctionWrapper,
-}
