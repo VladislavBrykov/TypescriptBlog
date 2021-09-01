@@ -16,7 +16,8 @@ const create_new_token_1 = __importDefault(require("./utils/create.new.token"));
 const find_out_which_id_1 = __importDefault(require("./utils/find.out.which.id"));
 const root_user_1 = __importDefault(require("../Posts/utils/root.user"));
 let UserService = class UserService {
-    constructor() { }
+    constructor() {
+    }
     async serviceLogin(phoneEmail, password) {
         const searchUser = await user_model_1.default.findOne({
             where: { phoneEmail, password },

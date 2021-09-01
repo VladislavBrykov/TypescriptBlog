@@ -1,28 +1,29 @@
-import { Model, DataTypes } from 'sequelize';
+import {Model, DataTypes} from 'sequelize';
 import sequelize from '../Config/database';
 
-class Comments extends Model {}
+class Comments extends Model {
+}
 
 Comments.init({
-  typeAction: {
-    type: DataTypes.STRING,
-    unique: false,
-  },
-  phoneEmail: {
-    type: DataTypes.STRING,
-    unique: false,
-  },
-  postId: {
-    type: DataTypes.STRING,
-    unique: false,
-  },
-  bodyComment: {
-    type: DataTypes.STRING,
-    unique: false,
-  },
+    typeAction: {
+        type: DataTypes.STRING,
+        unique: false,
+    },
+    phoneEmail: {
+        type: DataTypes.STRING,
+        unique: false,
+    },
+    postId: {
+        type: DataTypes.STRING,
+        unique: false,
+    },
+    bodyComment: {
+        type: DataTypes.STRING,
+        unique: false,
+    },
 }, {
-  sequelize,
-  modelName: 'comments',
+    sequelize,
+    modelName: 'comments',
 });
 
 export default Comments;

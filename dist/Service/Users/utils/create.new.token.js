@@ -18,21 +18,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const jwt = __importStar(require("jsonwebtoken"));
-const all_constants_1 = __importDefault(require("../../../Helpers/all.constants"));
 function newTokenCreator(phoneEmail) {
     return jwt.sign({
-        exp: Math.floor(Date.now() / all_constants_1.default.MS) + all_constants_1.default.TOKEN_TTL,
+        exp: Math.floor(Date.now() / Number.parseInt(process.env.MS)) + Number.parseInt(process.env.TOKEN_TTL),
         phoneEmail,
-    }, all_constants_1.default.SECRET_KEY);
+    }, process.env.SECRET_KEY);
 }
 function tokenValidator(token) {
     try {
-        return jwt.verify(token, all_constants_1.default.SECRET_KEY);
+        return jwt.verify(token, process.env.SECRET_KEY);
     }
     catch (error) {
         return null;

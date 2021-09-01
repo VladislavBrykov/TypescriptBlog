@@ -1,6 +1,6 @@
-import { Container } from 'inversify';
-import { TYPES } from './types';
-import { Users, Posts } from './interfaces';
+import {Container} from 'inversify';
+import {TYPES} from './types';
+import {Users, Posts} from './interfaces';
 import UserService from './Service/Users/users.service.functional';
 import PostService from './Service/Posts/posts.service.data';
 
@@ -11,4 +11,4 @@ myContainer.bind<Posts>(TYPES.Posts).to(PostService);
 const userService = myContainer.get<Users>(TYPES.Users);
 const postService = myContainer.get<Posts>(TYPES.Posts);
 
-export = { myContainer, userService, postService };
+export = {myContainer, userService, postService};

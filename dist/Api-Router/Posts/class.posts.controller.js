@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const types_1 = require("../../types");
-const search_user_service_1 = __importDefault(require("../../Service/Users/utils/search.user.service"));
 require("reflect-metadata");
 const rename_image_1 = __importDefault(require("../../Helpers/rename.image"));
 const incoming_data_validator_1 = require("../../Helpers/incoming.data.validator");
@@ -23,13 +22,6 @@ let PostController = class PostController {
         this.newPost = async (req, res) => {
             const { title, body, username } = req.body;
             const img = req.file;
-            const authorizationToken = {
-                authorization: req.headers.authorization
-            };
-            const incomingDataValid = await incoming_data_validator_1.schema.validate(req.body, authorizationToken);
-            if (incomingDataValid.error) {
-                return res.status(401).json({ error: incomingDataValid.error.details });
-            }
             const newImageName = rename_image_1.default(img.filename);
             const createNewPost = await this._postService.postService.serviceNewPost(title, body, req.headers.authorization, newImageName, username);
             return res.status(200).json({ createNewPost, status: 'new post is create' });
@@ -64,42 +56,15 @@ let PostController = class PostController {
         };
         this.newComment = async (req, res) => {
             const { typeAction, id, comment } = req.body;
-            const authorizationToken = {
-                authorization: req.headers.authorization
-            };
-            const incomingDataValid = await incoming_data_validator_1.schema.validate(req.body, authorizationToken);
-            if (incomingDataValid.error) {
-                return res.status(401).json({ error: incomingDataValid.error.details });
-            }
             const createNewComment = await this._postService.postService.serviceNewComment(typeAction, id, req.headers.authorization, comment);
             return res.status(200).json({ status: 'new comment is create', createNewComment });
         };
         this.newLike = async (req, res) => {
             const { typeActionPostComment, idPostComment, phoneEmail, likeDislike, } = req.body;
-            const authorizationToken = {
-                authorization: req.headers.authorization
-            };
-            const incomingDataValid = await incoming_data_validator_1.schema.validate(req.body, authorizationToken);
-            if (incomingDataValid.error) {
-                return res.status(401).json({ error: incomingDataValid.error.details });
-            }
-            if (await search_user_service_1.default.searchUserService(req.headers.authorization) === false) {
-                return res.status(403).json({ error: 'not enough rights' });
-            }
             const resultCreateNewLike = await this._postService.postService.serviceNewLike(typeActionPostComment, idPostComment, req.headers.authorization, phoneEmail, likeDislike);
             return res.status(200).json({ resultCreateNewLike });
         };
         this.deletePost = async (req, res) => {
-            const authorizationToken = {
-                authorization: req.headers.authorization
-            };
-            const incomingDataValid = await incoming_data_validator_1.schema.validate(req.params, authorizationToken);
-            if (incomingDataValid.error) {
-                return res.status(401).json({ error: incomingDataValid.error.details });
-            }
-            if (await search_user_service_1.default.searchUserService(req.headers.authorization) === false) {
-                return res.status(403).json({ error: 'not enough rights' });
-            }
             const deletedPost = await this._postService.postService.serviceDeletePost(req.headers.authorization, Number(req.params.toString()));
             if (deletedPost) {
                 return res.status(200).json({ deletedPost });
@@ -107,16 +72,6 @@ let PostController = class PostController {
             return res.status(403).json({ status: 'you can\'t deleted this post' });
         };
         this.deleteComment = async (req, res) => {
-            const authorizationToken = {
-                authorization: req.headers.authorization
-            };
-            const incomingDataValid = await incoming_data_validator_1.schema.validate(req.params, authorizationToken);
-            if (incomingDataValid.error) {
-                return res.status(401).json({ error: incomingDataValid.error.details });
-            }
-            if (await search_user_service_1.default.searchUserService(req.headers.authorization) === false) {
-                return res.status(403).json({ error: 'not enough rights' });
-            }
             const deletedComment = await this._postService.postService.serviceDeleteComment(req.headers.authorization, Number(req.params));
             if (deletedComment) {
                 return res.status(200).json({ status: 'comment be deleted', deletedComment });
