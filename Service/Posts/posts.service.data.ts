@@ -15,36 +15,50 @@ class PostService implements Posts {
     constructor() {
     }
 
+    async serviceuploadImage(
+        id: string,
+        image: string,
+    ): Promise<any> {
+        console.log('image-----------', image);
+        console.log("id-------------", id);
+        
+        await Post.update({image}, {where: {id}});
+        return image;
+    }
+    
+
     async serviceNewPost(
         title: string,
         body: string,
         token: string,
-        image: string,
+        // image: string,
         username: string,
     ): Promise<any> {
         const newToken = tokenCreator.newTokenCreator(username);
         await UserDevice.update({token: newToken}, {where: {token}});
 
-        const bodyCreateNewPost = {
+        const valueCreateNewPost = {
             title,
             body,
-            image,
+            // image,
             phoneEmail: username,
             countLikes: 0,
             countDisLikes: 0,
             countComments: 0,
         };
+        
+        await Post.create(valueCreateNewPost);
+        const bodyCreateNewPost = await Post.findAll({where: { title, body },});
         const resultCreateNewPost = {
             bodyCreateNewPost,
             newToken,
         };
-        await Post.create(bodyCreateNewPost);
         return resultCreateNewPost;
     }
 
-    async serviceGetPosts(page: number, sort: string): Promise<any> {
+    async serviceGetPosts(page: number, sort: string): Promise<any> { ///getPost
         const startIdPost: number = (page - 1) * 15;
-        if (sort === 'ASC or DESC') {
+        if (sort === 'ASC') {          //!!!!!!xerocu
             return Post.findAll({
                 offset: startIdPost,
                 limit: 15,

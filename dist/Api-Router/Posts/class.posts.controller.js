@@ -19,11 +19,22 @@ const rename_image_1 = __importDefault(require("../../Helpers/rename.image"));
 const incoming_data_validator_1 = require("../../Helpers/incoming.data.validator");
 let PostController = class PostController {
     constructor(postService) {
-        this.newPost = async (req, res) => {
-            const { title, body, username } = req.body;
+        this.uploudImage = async (req, res) => {
             const img = req.file;
+            const { id } = req.params;
             const newImageName = rename_image_1.default(img.filename);
-            const createNewPost = await this._postService.postService.serviceNewPost(title, body, req.headers.authorization, newImageName, username);
+            const createNewPost = await this._postService.postService.serviceuploadImage(id, newImageName);
+            return res.status(200).json({ createNewPost, status: 'new post is create' });
+        };
+        this.newPost = async (req, res) => {
+            const { title, body, phoneEmail } = req.body;
+            console.log("--------body", req.body);
+            console.log("--------headers", req.headers);
+            // const img = req.file;
+            // const newImageName = imageRenameForIdUser(img.filename);
+            const createNewPost = await this._postService.postService.serviceNewPost(title, body, req.headers.authorization, 
+            // newImageName,
+            phoneEmail);
             return res.status(200).json({ createNewPost, status: 'new post is create' });
         };
         this.getPosts = async (req, res) => {
@@ -65,7 +76,8 @@ let PostController = class PostController {
             return res.status(200).json({ resultCreateNewLike });
         };
         this.deletePost = async (req, res) => {
-            const deletedPost = await this._postService.postService.serviceDeletePost(req.headers.authorization, Number(req.params.toString()));
+            console.log("params -------", req.params.id);
+            const deletedPost = await this._postService.postService.serviceDeletePost(req.headers.authorization, Number(req.params.id.toString()));
             if (deletedPost) {
                 return res.status(200).json({ deletedPost });
             }

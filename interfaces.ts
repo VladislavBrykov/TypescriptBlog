@@ -22,7 +22,7 @@ export interface Posts {
         title: string,
         body: string,
         token: string,
-        image: string,
+        // image: string,
         username: string
     ): Promise<any>;
 
@@ -37,6 +37,11 @@ export interface Posts {
         id: number,
         token: string,
         comment: string,
+    ): Promise<any>;
+
+    serviceuploadImage(
+        id: string,
+        image: string,
     ): Promise<any>;
 
     serviceNewLike(

@@ -20,7 +20,6 @@ exports.schema = Joi.object({
         .max(1000),
     sort: Joi.string().valid('standard', 'reverse'),
     phoneEmail: Joi.string()
-        .alphanum()
         .min(3)
         .max(30),
     username: Joi.string()

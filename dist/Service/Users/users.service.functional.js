@@ -57,10 +57,10 @@ let UserService = class UserService {
     async serviceLogout(token, all) {
         const searchUser = await Users_Device_model_1.default.findOne({ where: { token } });
         if (all === 'true') {
-            await Users_Device_model_1.default.update({ token: null }, { where: { token } });
+            await Users_Device_model_1.default.update({ token: null }, { where: { phoneEmail: searchUser.phoneEmail } });
         }
         else {
-            await Users_Device_model_1.default.update({ token: null }, { where: { phoneEmail: searchUser.phoneEmail } });
+            await Users_Device_model_1.default.update({ token: null }, { where: { token } });
         }
         return true;
     }

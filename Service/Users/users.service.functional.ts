@@ -55,12 +55,14 @@ class UserService implements Users {
         const searchUser = await UserDevice.findOne({where: {token}});
 
         if (all === 'true') {
-            await UserDevice.update({token: null}, {where: {token}});
-        } else {
             await UserDevice.update(
                 {token: null},
                 {where: {phoneEmail: searchUser.phoneEmail}},
-            );
+            );        
+        } else {
+            await UserDevice.update(
+                {token: null},
+                {where: {token}});
         }
         return true;
     }

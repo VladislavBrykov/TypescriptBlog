@@ -27,7 +27,6 @@ export const schema = Joi.object({
     sort: Joi.string().valid('standard', 'reverse'),
 
     phoneEmail: Joi.string()
-        .alphanum()
         .min(3)
         .max(30),
 

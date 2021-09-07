@@ -23,12 +23,14 @@ apiRouter.get('/logout', limitedCheckFactor_1.default.limitedCheckFactorWithToke
 apiRouter.post('/password-update', limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classUserController.passwordUpdate));
 apiRouter.delete('/delete-user', limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classUserController.deleteUser));
 // Posts
-apiRouter.post('/new-post', upload_setting_for_image_1.default.single('image'), limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classPostController.newPost));
+apiRouter.post('/new-post', limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classPostController.newPost));
+//apiRouter.post('/new-post', imageUpload.single('image'),limitedCheckFactor.limitedCheckFactorWithToken, asyncFunctionWrapper(classPostController.newPost));
 apiRouter.get('/posts', async_function_wrapper_1.asyncFunctionWrapper(classPostController.getPosts));
 apiRouter.get('/posts/:id', async_function_wrapper_1.asyncFunctionWrapper(classPostController.getPostId));
 apiRouter.get('/post-comments-likes/:id', async_function_wrapper_1.asyncFunctionWrapper(classPostController.getPostCommentsLikesId));
 apiRouter.post('/new-comment', limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classPostController.newComment));
 apiRouter.post('/new-like', limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classPostController.newLike));
 apiRouter.delete('/delete-comment/:id', limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classPostController.deleteComment));
+apiRouter.post('/uploud-image/:id', upload_setting_for_image_1.default.single('image'), async_function_wrapper_1.asyncFunctionWrapper(classPostController.uploudImage));
 exports.default = apiRouter;
 //# sourceMappingURL=routers.js.map

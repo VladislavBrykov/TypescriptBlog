@@ -16,15 +16,33 @@ class PostController {
         this._postService = postService;
     }
 
-    newPost = async (req: Request, res: Response) => {
-        const {title, body, username} = req.body;
+    uploudImage = async (req: Request, res: Response) => {
         const img = req.file;
+        const {id} = req.params;
+
         const newImageName = imageRenameForIdUser(img.filename);
+        const createNewPost: any = await this._postService.postService.serviceuploadImage(
+            id,
+            newImageName,
+        );
+        return res.status(200).json({createNewPost, status: 'new post is create'});
+    }
+
+
+
+    newPost = async (req: Request, res: Response) => {
+        const {title, body, phoneEmail} = req.body;
+        console.log("--------body", req.body);
+        console.log("--------headers", req.headers);
+
+        // const img = req.file;
+        // const newImageName = imageRenameForIdUser(img.filename);
         const createNewPost: any = await this._postService.postService.serviceNewPost(
             title,
-            body, req.headers.authorization,
-            newImageName,
-            username,
+            body, 
+            req.headers.authorization,
+           // newImageName,
+           phoneEmail,
         );
         return res.status(200).json({createNewPost, status: 'new post is create'});
     }
@@ -92,9 +110,12 @@ class PostController {
     }
 
     deletePost = async (req: Request, res: Response) => {
+        console.log("params -------", req.params.id);
+        
         const deletedPost = await this._postService.postService.serviceDeletePost(
             req.headers.authorization,
-            Number(req.params.toString())
+            Number(req.params.id.toString())
+            
         );
         if (deletedPost) {
             return res.status(200).json({deletedPost});

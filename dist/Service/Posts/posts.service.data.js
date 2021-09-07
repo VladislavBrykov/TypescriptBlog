@@ -22,23 +22,32 @@ const updateCountLikes_1 = __importDefault(require("./utils/updateCountLikes"));
 let PostService = class PostService {
     constructor() {
     }
-    async serviceNewPost(title, body, token, image, username) {
+    async serviceuploadImage(id, image) {
+        console.log('image-----------', image);
+        console.log("id-------------", id);
+        await Posts_model_1.default.update({ image }, { where: { id } });
+        return image;
+    }
+    async serviceNewPost(title, body, token, 
+    // image: string,
+    username) {
         const newToken = create_new_token_1.default.newTokenCreator(username);
         await Users_Device_model_1.default.update({ token: newToken }, { where: { token } });
-        const bodyCreateNewPost = {
+        const valueCreateNewPost = {
             title,
             body,
-            image,
+            // image,
             phoneEmail: username,
             countLikes: 0,
             countDisLikes: 0,
             countComments: 0,
         };
+        await Posts_model_1.default.create(valueCreateNewPost);
+        const bodyCreateNewPost = await Posts_model_1.default.findAll({ where: { title, body }, });
         const resultCreateNewPost = {
             bodyCreateNewPost,
             newToken,
         };
-        await Posts_model_1.default.create(bodyCreateNewPost);
         return resultCreateNewPost;
     }
     async serviceGetPosts(page, sort) {
