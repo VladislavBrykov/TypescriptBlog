@@ -1,6 +1,6 @@
 const TYPES = {
-  Users: Symbol.for('Users'),
-  Posts: Symbol.for('Posts'),
+    Users: Symbol.for('Users'),
+    Posts: Symbol.for('Posts'),
 };
 
-export { TYPES };
+export {TYPES};
