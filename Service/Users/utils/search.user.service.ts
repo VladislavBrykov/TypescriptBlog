@@ -1,6 +1,6 @@
 import UserDevice from '../../../Models/Users.Device.model';
-import User from '../../../Models/user.model';
 import tokenService from './create.new.token';
+import User from "../../../Models/User.model";
 
 function updateTokenUserById(nameObject, newToken, data) {
     nameObject.update({token: newToken}, {

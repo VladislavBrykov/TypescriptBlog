@@ -1,10 +1,10 @@
 import {injectable} from 'inversify';
-import User from '../../Models/user.model';
 import UserDevice from '../../Models/Users.Device.model';
 import tokenCreator from './utils/create.new.token';
 import ResTypeid from './utils/find.out.which.id';
 import {Users} from '../../interfaces';
 import userRoot from '../Posts/utils/root.user';
+import User from "../../Models/User.model";
 
 @injectable()
 class UserService implements Users {
@@ -58,7 +58,7 @@ class UserService implements Users {
             await UserDevice.update(
                 {token: null},
                 {where: {phoneEmail: searchUser.phoneEmail}},
-            );        
+            );
         } else {
             await UserDevice.update(
                 {token: null},

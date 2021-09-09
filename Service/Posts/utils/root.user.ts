@@ -1,5 +1,5 @@
-import User from '../../../Models/user.model';
 import UserDevice from '../../../Models/Users.Device.model';
+import User from "../../../Models/User.model";
 
 async function userRootByToken(token) {
     const searchUser = await UserDevice.findOne({

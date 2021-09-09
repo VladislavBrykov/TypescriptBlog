@@ -52,7 +52,7 @@ let PostService = class PostService {
     }
     async serviceGetPosts(page, sort) {
         const startIdPost = (page - 1) * 15;
-        if (sort === 'ASC or DESC') {
+        if (sort === 'ASC') { //!!!!!!xerocu
             return Posts_model_1.default.findAll({
                 offset: startIdPost,
                 limit: 15,
