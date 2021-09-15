@@ -6,4 +6,3 @@ export const asyncFunctionWrapper = (callBack) => async (req, res) => {
     res.status(500).send('the server encountered an unknown error');
   }
 };
-

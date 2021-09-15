@@ -20,11 +20,8 @@ const searchLikeDislike_1 = __importDefault(require("./utils/searchLikeDislike")
 const updateCountComments_1 = __importDefault(require("./utils/updateCountComments"));
 const updateCountLikes_1 = __importDefault(require("./utils/updateCountLikes"));
 let PostService = class PostService {
-    constructor() {
-    }
+    constructor() { }
     async serviceuploadImage(id, image) {
-        console.log('image-----------', image);
-        console.log("id-------------", id);
         await Posts_model_1.default.update({ image }, { where: { id } });
         return image;
     }
