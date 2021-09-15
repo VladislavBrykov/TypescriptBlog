@@ -22,7 +22,6 @@ let UserController = class UserController {
     constructor(userService) {
         this.registration = async (req, res) => {
             const { password, phoneEmail } = req.body;
-            // await limitedCheckFactor.limitedCheckFactorWithoutToken(req, res);
             const resRegistration = await this._userService.userService.serviceRegistration(phoneEmail, password);
             return resRegistration
                 ? res.status(200)

@@ -10,16 +10,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
-const user_model_1 = __importDefault(require("../../Models/user.model"));
 const Users_Device_model_1 = __importDefault(require("../../Models/Users.Device.model"));
 const create_new_token_1 = __importDefault(require("./utils/create.new.token"));
 const find_out_which_id_1 = __importDefault(require("./utils/find.out.which.id"));
 const root_user_1 = __importDefault(require("../Posts/utils/root.user"));
+const User_model_1 = __importDefault(require("../../Models/User.model"));
 let UserService = class UserService {
     constructor() {
     }
     async serviceLogin(phoneEmail, password) {
-        const searchUser = await user_model_1.default.findOne({
+        const searchUser = await User_model_1.default.findOne({
             where: { phoneEmail, password },
             attributes: ['phoneEmail', 'typeId', 'role'],
         });
@@ -47,11 +47,11 @@ let UserService = class UserService {
             typeId,
             role: 'admin',
         };
-        const searchUser = await user_model_1.default.findOne({ where: { phoneEmail } });
+        const searchUser = await User_model_1.default.findOne({ where: { phoneEmail } });
         if (searchUser) {
             return false;
         }
-        await user_model_1.default.create(registrationUser);
+        await User_model_1.default.create(registrationUser);
         return true;
     }
     async serviceLogout(token, all) {
@@ -68,7 +68,7 @@ let UserService = class UserService {
         const searchUser = await Users_Device_model_1.default.findOne({ where: { token } });
         if (searchUser) {
             await Users_Device_model_1.default.destroy({ where: { phoneEmail: searchUser.phoneEmail } });
-            await user_model_1.default.destroy({ where: { phoneEmail: searchUser.phoneEmail } });
+            await User_model_1.default.destroy({ where: { phoneEmail: searchUser.phoneEmail } });
             return true;
         }
         return false;
@@ -76,16 +76,16 @@ let UserService = class UserService {
     async serviceDeleteUserByAdmin(phoneEmail) {
         if (await root_user_1.default.userRootById(phoneEmail) === 'admin') {
             await Users_Device_model_1.default.destroy({ where: { phoneEmail } });
-            await user_model_1.default.destroy({ where: { phoneEmail } });
+            await User_model_1.default.destroy({ where: { phoneEmail } });
             return true;
         }
         return false;
     }
     async servicePasswordUpdate(phoneEmail, password, newPassword, token) {
-        const searchUser = user_model_1.default.findOne({ where: { phoneEmail, password } });
+        const searchUser = User_model_1.default.findOne({ where: { phoneEmail, password } });
         if (searchUser) {
             const newToken = create_new_token_1.default.newTokenCreator(phoneEmail);
-            await user_model_1.default.update({ password: newPassword }, { where: { phoneEmail } });
+            await User_model_1.default.update({ password: newPassword }, { where: { phoneEmail } });
             await Users_Device_model_1.default.update({ token: newToken }, { where: { token } });
             return { status: true, token: newToken };
         }

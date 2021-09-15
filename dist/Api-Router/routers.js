@@ -24,7 +24,6 @@ apiRouter.post('/password-update', limitedCheckFactor_1.default.limitedCheckFact
 apiRouter.delete('/delete-user', limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classUserController.deleteUser));
 // Posts
 apiRouter.post('/new-post', limitedCheckFactor_1.default.limitedCheckFactorWithToken, async_function_wrapper_1.asyncFunctionWrapper(classPostController.newPost));
-//apiRouter.post('/new-post', imageUpload.single('image'),limitedCheckFactor.limitedCheckFactorWithToken, asyncFunctionWrapper(classPostController.newPost));
 apiRouter.get('/posts', async_function_wrapper_1.asyncFunctionWrapper(classPostController.getPosts));
 apiRouter.get('/posts/:id', async_function_wrapper_1.asyncFunctionWrapper(classPostController.getPostId));
 apiRouter.get('/post-comments-likes/:id', async_function_wrapper_1.asyncFunctionWrapper(classPostController.getPostCommentsLikesId));

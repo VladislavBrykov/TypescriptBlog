@@ -28,4 +28,4 @@ User.init({
     modelName: 'user',
 });
 exports.default = User;
-//# sourceMappingURL=user.model.js.map
+//# sourceMappingURL=User.model.js.map

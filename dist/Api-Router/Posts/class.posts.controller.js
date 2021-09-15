@@ -28,13 +28,7 @@ let PostController = class PostController {
         };
         this.newPost = async (req, res) => {
             const { title, body, phoneEmail } = req.body;
-            console.log("--------body", req.body);
-            console.log("--------headers", req.headers);
-            // const img = req.file;
-            // const newImageName = imageRenameForIdUser(img.filename);
-            const createNewPost = await this._postService.postService.serviceNewPost(title, body, req.headers.authorization, 
-            // newImageName,
-            phoneEmail);
+            const createNewPost = await this._postService.postService.serviceNewPost(title, body, req.headers.authorization, phoneEmail);
             return res.status(200).json({ createNewPost, status: 'new post is create' });
         };
         this.getPosts = async (req, res) => {
@@ -76,7 +70,7 @@ let PostController = class PostController {
             return res.status(200).json({ resultCreateNewLike });
         };
         this.deletePost = async (req, res) => {
-            console.log("params -------", req.params.id);
+            console.log('params -------', req.params.id);
             const deletedPost = await this._postService.postService.serviceDeletePost(req.headers.authorization, Number(req.params.id.toString()));
             if (deletedPost) {
                 return res.status(200).json({ deletedPost });

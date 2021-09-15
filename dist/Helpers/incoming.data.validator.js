@@ -1,44 +1,48 @@
 "use strict";
+// const Joi = require('joi');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.schema = void 0;
-const Joi = require('joi');
-exports.schema = Joi.object({
-    typeAction: Joi.string().valid('post', 'comment'),
-    typeActionPostComment: Joi.string().valid('post', 'comment'),
-    likeDislike: Joi.string().valid('like', 'dislike'),
-    idPostComment: Joi.number()
+const joi_1 = __importDefault(require("joi"));
+exports.schema = joi_1.default.object({
+    typeAction: joi_1.default.string().valid('post', 'comment'),
+    typeActionPostComment: joi_1.default.string().valid('post', 'comment'),
+    likeDislike: joi_1.default.string().valid('like', 'dislike'),
+    idPostComment: joi_1.default.number()
         .min(1)
         .max(10000),
-    comment: Joi.string()
+    comment: joi_1.default.string()
         .min(1)
         .max(300),
-    id: Joi.number()
+    id: joi_1.default.number()
         .min(1)
         .max(10000),
-    page: Joi.string()
+    page: joi_1.default.string()
         .min(1)
         .max(1000),
-    sort: Joi.string().valid('standard', 'reverse'),
-    phoneEmail: Joi.string()
+    sort: joi_1.default.string().valid('standard', 'reverse'),
+    phoneEmail: joi_1.default.string()
         .min(3)
         .max(30),
-    username: Joi.string()
+    username: joi_1.default.string()
         .alphanum()
         .min(3)
         .max(30),
-    password: Joi.string()
+    password: joi_1.default.string()
         .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-    newPassword: Joi.string()
+    newPassword: joi_1.default.string()
         .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-    title: Joi.string()
+    title: joi_1.default.string()
         .min(10)
         .max(300),
-    body: Joi.string()
+    body: joi_1.default.string()
         .min(10)
         .max(3000),
     authorization: [
-        Joi.string(),
-        Joi.number()
+        joi_1.default.string(),
+        joi_1.default.number(),
     ],
 });
 //# sourceMappingURL=incoming.data.validator.js.map
