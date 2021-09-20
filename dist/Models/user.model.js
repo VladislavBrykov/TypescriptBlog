@@ -10,6 +10,7 @@ class User extends sequelize_1.Model {
 User.init({
     phoneEmail: {
         type: sequelize_1.DataTypes.STRING,
+        primaryKey: true,
     },
     password: {
         type: sequelize_1.DataTypes.STRING,
@@ -28,4 +29,4 @@ User.init({
     modelName: 'user',
 });
 exports.default = User;
-//# sourceMappingURL=user.model.js.map
+//# sourceMappingURL=User.model.js.map

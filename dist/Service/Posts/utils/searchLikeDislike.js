@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Likes_model_1 = __importDefault(require("../../../Models/Likes.model"));
-async function searchLikeDislikeUser(idPostComment, phoneEmail, likeDislike, typeActionPostComment) {
+async function searchLikeDislikeUser(idPostComment, userPhoneEmail, likeDislike, typeActionPostComment) {
     const searchAction = await Likes_model_1.default.findOne({
-        where: { idPostComment: idPostComment.toString(), phoneEmail },
+        where: { postId: idPostComment.toString(), userPhoneEmail },
         attributes: ['likeDislike'],
     });
     if (!searchAction) {
@@ -19,7 +19,7 @@ async function searchLikeDislikeUser(idPostComment, phoneEmail, likeDislike, typ
     if (canCreate !== likeDislike) {
         await Likes_model_1.default.destroy({
             where: {
-                phoneEmail, typeActionPostComment, idPostComment: idPostComment.toString(), likeDislike,
+                userPhoneEmail, typeActionPostComment, postId: idPostComment.toString(), likeDislike,
             },
         });
         return true;

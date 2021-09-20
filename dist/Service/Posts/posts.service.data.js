@@ -22,22 +22,15 @@ const updateCountLikes_1 = __importDefault(require("./utils/updateCountLikes"));
 let PostService = class PostService {
     constructor() {
     }
-    async serviceuploadImage(id, image) {
-        console.log('image-----------', image);
-        console.log("id-------------", id);
+    async uploadImage(id, image) {
         await Posts_model_1.default.update({ image }, { where: { id } });
         return image;
     }
-    async serviceNewPost(title, body, token, 
-    // image: string,
-    username) {
-        const newToken = create_new_token_1.default.newTokenCreator(username);
-        await Users_Device_model_1.default.update({ token: newToken }, { where: { token } });
+    async newPost(title, body, username) {
         const valueCreateNewPost = {
             title,
             body,
-            // image,
-            phoneEmail: username,
+            userPhoneEmail: username,
             countLikes: 0,
             countDisLikes: 0,
             countComments: 0,
@@ -46,13 +39,12 @@ let PostService = class PostService {
         const bodyCreateNewPost = await Posts_model_1.default.findAll({ where: { title, body }, });
         const resultCreateNewPost = {
             bodyCreateNewPost,
-            newToken,
         };
         return resultCreateNewPost;
     }
-    async serviceGetPosts(page, sort) {
+    async getPosts(page, sort) {
         const startIdPost = (page - 1) * 15;
-        if (sort === 'ASC') { //!!!!!!xerocu
+        if (sort === 'ASC') {
             return Posts_model_1.default.findAll({
                 offset: startIdPost,
                 limit: 15,
@@ -65,13 +57,11 @@ let PostService = class PostService {
         });
         return { posts };
     }
-    async serviceNewComment(typeAction, id, token, comment) {
+    async newComment(typeAction, id, token, comment) {
         const username = await search_user_service_1.default.searchUserService(token);
-        const newToken = create_new_token_1.default.newTokenCreator(username);
-        await Users_Device_model_1.default.update({ token: newToken }, { where: { token } });
         const createNewComment = {
             typeAction,
-            phoneEmail: username,
+            userPhoneEmail: username,
             postId: id.toString(),
             bodyComment: comment,
         };
@@ -80,39 +70,36 @@ let PostService = class PostService {
         return {
             createNewComment,
             success: 'comment create',
-            newToken,
         };
     }
-    async serviceNewLike(typeActionPostComment, idPostComment, token, phoneEmail, likeDislike) {
-        const newToken = create_new_token_1.default.newTokenCreator(phoneEmail);
-        await Users_Device_model_1.default.update({ token: newToken }, { where: { token } });
-        if (!await searchLikeDislike_1.default(idPostComment, phoneEmail, likeDislike, typeActionPostComment)) {
+    async newLike(typeActionPostComment, postId, newToken, userPhoneEmail, likeDislike) {
+        if (!await searchLikeDislike_1.default(postId, userPhoneEmail, likeDislike, typeActionPostComment)) {
             await Likes_model_1.default.destroy({
                 where: {
-                    phoneEmail, typeActionPostComment, idPostComment: idPostComment.toString(), likeDislike,
+                    userPhoneEmail, typeActionPostComment, idPostComment: postId.toString(), likeDislike,
                 },
             });
-            await updateCountLikes_1.default(-1, idPostComment, likeDislike);
-            return { true: `${likeDislike} exists and be deleted`, newToken };
+            await updateCountLikes_1.default(-1, postId, likeDislike);
+            return { true: `${likeDislike} exists and be deleted` };
         }
         const createNewLIke = {
             typeActionPostComment,
-            idPostComment,
-            phoneEmail,
+            postId,
+            userPhoneEmail,
             likeDislike,
         };
         await Likes_model_1.default.create(createNewLIke);
-        await updateCountLikes_1.default(1, idPostComment, likeDislike);
-        return { true: `${likeDislike} create`, newToken };
+        await updateCountLikes_1.default(1, postId, likeDislike);
+        return { true: `${likeDislike} create` };
     }
-    async serviceDeletePost(token, postId) {
+    async deletePost(token, postId) {
         await Posts_model_1.default.destroy({ where: { id: postId } });
         const username = await search_user_service_1.default.searchUserService(token);
         const newToken = create_new_token_1.default.newTokenCreator(username);
         await Users_Device_model_1.default.update({ token: newToken }, { where: { token } });
         return { status: 'true', newToken };
     }
-    async serviceDeleteComment(token, commentId) {
+    async deleteComment(token, commentId) {
         await Comments_model_1.default.destroy({ where: { idToDo: commentId.toString() } });
         const username = await search_user_service_1.default.searchUserService(token);
         const newToken = create_new_token_1.default.newTokenCreator(username);
@@ -129,13 +116,13 @@ let PostService = class PostService {
     async getPostCommentsLikesById(postId) {
         const likes = await Likes_model_1.default.findAll({
             where: {
-                idPostComment: postId.toString(),
+                postId: postId.toString(),
                 likeDislike: 'like'
             },
         });
         const dislikes = await Likes_model_1.default.findAll({
             where: {
-                idPostComment: postId.toString(),
+                postId: postId.toString(),
                 likeDislike: 'dislike'
             },
         });

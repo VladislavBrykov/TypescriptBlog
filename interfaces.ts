@@ -1,15 +1,15 @@
 export interface Users {
-    serviceLogin(phoneEmail: string, password: string): Promise<any>;
+    login(phoneEmail: string, password: string): Promise<any>;
 
-    serviceRegistration(phoneEmail: string, password: string): Promise<any>;
+    registration(phoneEmail: string, password: string): Promise<any>;
 
-    serviceLogout(token: string, all: string): Promise<any>;
+    logout(token: string, all: string): Promise<any>;
 
-    serviceDeleteUser(token: string): Promise<any>;
+    deleteUser(token: string): Promise<any>;
 
-    serviceDeleteUserByAdmin(username: string): Promise<any>;
+    deleteUserByAdmin(username: string): Promise<any>;
 
-    servicePasswordUpdate(
+    passwordUpdate(
         phoneEmail: string,
         password: string,
         newPassword: string,
@@ -18,33 +18,31 @@ export interface Users {
 }
 
 export interface Posts {
-    serviceNewPost(
+    newPost(
         title: string,
         body: string,
-        token: string,
-        // image: string,
         username: string
     ): Promise<any>;
 
-    serviceGetPosts(page: number, sort: string): Promise<any>;
+    getPosts(page: number, sort: string): Promise<any>;
 
     getPostById(postId: number): Promise<any>;
 
     getPostCommentsLikesById(postId: number): Promise<any>;
 
-    serviceNewComment(
+    newComment(
         typeAction: string,
         id: number,
         token: string,
         comment: string,
     ): Promise<any>;
 
-    serviceuploadImage(
+    uploadImage(
         id: string,
         image: string,
     ): Promise<any>;
 
-    serviceNewLike(
+    newLike(
         typeActionPostComment: string,
         idPostComment: number,
         token: string,
@@ -52,7 +50,7 @@ export interface Posts {
         likeDislike: string,
     ): Promise<any>;
 
-    serviceDeletePost(token: string, postId: number): Promise<any>;
+    deletePost(token: string, postId: number): Promise<any>;
 
-    serviceDeleteComment(token: string, commentId: number): Promise<any>;
+    deleteComment(token: string, commentId: number): Promise<any>;
 }

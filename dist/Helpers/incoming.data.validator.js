@@ -1,44 +1,132 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.schema = void 0;
 const Joi = require('joi');
-exports.schema = Joi.object({
-    typeAction: Joi.string().valid('post', 'comment'),
-    typeActionPostComment: Joi.string().valid('post', 'comment'),
-    likeDislike: Joi.string().valid('like', 'dislike'),
-    idPostComment: Joi.number()
-        .min(1)
-        .max(10000),
-    comment: Joi.string()
-        .min(1)
-        .max(300),
-    id: Joi.number()
-        .min(1)
-        .max(10000),
-    page: Joi.string()
-        .min(1)
-        .max(1000),
-    sort: Joi.string().valid('standard', 'reverse'),
-    phoneEmail: Joi.string()
-        .min(3)
-        .max(30),
-    username: Joi.string()
-        .alphanum()
-        .min(3)
-        .max(30),
-    password: Joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-    newPassword: Joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-    title: Joi.string()
-        .min(10)
-        .max(300),
-    body: Joi.string()
-        .min(10)
-        .max(3000),
-    authorization: [
-        Joi.string(),
-        Joi.number()
-    ],
-});
+async function registrationLoginInputData(body) {
+    const schema = Joi.object({
+        phoneEmail: Joi.string()
+            .min(3)
+            .max(30),
+        password: Joi.string()
+            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+    });
+    const validatorParams = schema.validate(body);
+    if (validatorParams.error) {
+        throw new Error(schema.validate(body).error.details);
+    }
+}
+async function deleteUserByAdminInputData(body) {
+    const schema = Joi.object({
+        username: Joi.string()
+            .alphanum()
+            .min(3)
+            .max(30),
+        newToken: Joi.string()
+            .min(10)
+    });
+    const validatorParams = schema.validate(body);
+    if (validatorParams.error) {
+        throw new Error(schema.validate(body).error.details);
+    }
+}
+async function passwordUpdateInputData(body) {
+    const schema = Joi.object({
+        password: Joi.string()
+            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+        newPassword: Joi.string()
+            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+        phoneEmail: Joi.string()
+            .min(3)
+            .max(30),
+        newToken: Joi.string()
+            .min(10)
+    });
+    const validatorParams = schema.validate(body);
+    if (validatorParams.error) {
+        throw new Error(schema.validate(body).error.details);
+    }
+}
+async function newPostInputData(body) {
+    const schema = Joi.object({
+        title: Joi.string()
+            .min(5)
+            .max(300),
+        body: Joi.string()
+            .min(5)
+            .max(3000),
+        user: Joi.string()
+            .min(3)
+            .max(30),
+        newToken: Joi.string()
+            .min(10)
+    });
+    const validatorParams = schema.validate(body);
+    if (validatorParams.error) {
+        throw new Error(schema.validate(body).error.details);
+    }
+}
+async function getPostsInputData(body) {
+    const schema = Joi.object({
+        page: Joi.string()
+            .min(1)
+            .max(1000),
+        sort: Joi.string().valid('standard', 'reverse'),
+    });
+    const validatorParams = schema.validate(body);
+    if (validatorParams.error) {
+        throw new Error(schema.validate(body).error.details);
+    }
+}
+async function idInputData(body) {
+    const schema = Joi.object({
+        id: Joi.number()
+            .min(1)
+            .max(10000),
+    });
+    const validatorParams = schema.validate(body);
+    if (validatorParams.error) {
+        throw new Error(schema.validate(body).error.details);
+    }
+}
+async function newCommentInputData(body) {
+    const schema = Joi.object({
+        typeAction: Joi.string().valid('post', 'comment'),
+        id: Joi.number()
+            .min(1)
+            .max(10000),
+        comment: Joi.string()
+            .min(1)
+            .max(300),
+    });
+    const validatorParams = schema.validate(body);
+    if (validatorParams.error) {
+        throw new Error(schema.validate(body).error.details);
+    }
+}
+async function newLikeInputData(body) {
+    const schema = Joi.object({
+        typeAction: Joi.string().valid('post', 'comment'),
+        idPostComment: Joi.number()
+            .min(1)
+            .max(10000),
+        phoneEmail: Joi.string()
+            .min(3)
+            .max(30),
+        likeDislike: Joi.string().valid('like', 'dislike'),
+    });
+    const validatorParams = schema.validate(body);
+    if (validatorParams.error) {
+        throw new Error(schema.validate(body).error.details);
+    }
+}
+const valid = {
+    registrationLoginInputData,
+    deleteUserByAdminInputData,
+    passwordUpdateInputData,
+    newPostInputData,
+    getPostsInputData,
+    idInputData,
+    newCommentInputData,
+    newLikeInputData,
+};
+exports.default = valid;
 //# sourceMappingURL=incoming.data.validator.js.map
