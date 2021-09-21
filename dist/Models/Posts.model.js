@@ -5,10 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const database_1 = __importDefault(require("../Config/database"));
+const User_model_1 = __importDefault(require("./User.model"));
 class Post extends sequelize_1.Model {
 }
 Post.init({
-    phoneEmail: {
+    userPhoneEmail: {
         type: sequelize_1.DataTypes.STRING,
         unique: false,
     },
@@ -40,5 +41,6 @@ Post.init({
     sequelize: database_1.default,
     modelName: 'posts',
 });
+Post.belongsTo(User_model_1.default, { foreignKey: 'phoneEmail', targetKey: 'phoneEmail' });
 exports.default = Post;
 //# sourceMappingURL=Posts.model.js.map

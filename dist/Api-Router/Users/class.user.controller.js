@@ -16,61 +16,64 @@ const inversify_1 = require("inversify");
 const types_1 = require("../../types");
 require("reflect-metadata");
 const database_1 = __importDefault(require("../../Config/database"));
-const search_user_service_1 = __importDefault(require("../../Service/Users/utils/search.user.service"));
+const incoming_data_validator_1 = __importDefault(require("../../Helpers/incoming.data.validator"));
 database_1.default.sync({ force: true }).then(() => console.log('database created and ready to work'));
 let UserController = class UserController {
     constructor(userService) {
         this.registration = async (req, res) => {
             const { password, phoneEmail } = req.body;
-            // await limitedCheckFactor.limitedCheckFactorWithoutToken(req, res);
-            const resRegistration = await this._userService.userService.serviceRegistration(phoneEmail, password);
-            return resRegistration
-                ? res.status(200)
-                    .json({ status: 'registration successful' })
-                : res.status(404)
-                    .json({ status: 'registration error, user exists' });
+            await incoming_data_validator_1.default.registrationLoginInputData(req.body);
+            const registerUser = await this.capacityUser.userService.registration(phoneEmail, password);
+            if (!registerUser) {
+                throw new Error('User not registered, user exists');
+            }
+            return res.status(200).json({ status: 'registration successful' });
         };
         this.login = async (req, res) => {
             const { password, phoneEmail } = req.body;
-            const loginUser = await this._userService.userService.serviceLogin(phoneEmail, password);
-            return loginUser
-                ? res.status(200).json({ loginUser })
-                : res.status(401).json({ status: 'Invalid username or password' });
+            await incoming_data_validator_1.default.registrationLoginInputData(req.body);
+            const loginUser = await this.capacityUser.userService.login(phoneEmail, password);
+            if (loginUser[0] === false) {
+                throw new Error('Invalid username or password');
+            }
+            return res.status(200).json({ loginUser });
         };
         this.logout = async (req, res) => {
-            const token = req.headers.authorization;
+            const { newToken } = req.body;
             const { all } = req.query;
-            const logoutUser = await this._userService.userService.serviceLogout(token, all.toString());
-            return logoutUser
-                ? res.status(200).json({ status: true })
-                : res.status(401).json({ status: 'token error' });
+            const logoutUser = await this.capacityUser.userService.logout(newToken, all.toString());
+            if (!logoutUser) {
+                throw new Error('token error');
+            }
+            return res.status(200).json({ status: true });
         };
         this.deleteUser = async (req, res) => {
-            const token = req.headers.authorization;
-            const logoutUser = await this._userService.userService.serviceDeleteUser(token);
-            return logoutUser
-                ? res.status(200).json({ status: true })
-                : res.status(403).json({ status: 'you can\'t logout' });
+            const { newToken } = req.body;
+            const deleteUser = await this.capacityUser.userService.deleteUser(newToken);
+            if (!deleteUser) {
+                throw new Error('you can\'t logout');
+            }
+            return res.status(200).json({ status: true });
         };
         this.deleteUserByAdmin = async (req, res) => {
-            const { username } = req.body;
-            const logoutUser = await this._userService.userService.serviceDeleteUserByAdmin(username);
-            return logoutUser
-                ? res.status(200).json({ status: true })
-                : res.status(401).json({ status: 'token error' });
+            const { username, newToken } = req.body;
+            await incoming_data_validator_1.default.deleteUserByAdminInputData(req.body);
+            const logoutUser = await this.capacityUser.userService.deleteUserByAdmin(username);
+            if (!logoutUser) {
+                throw new Error('token error');
+            }
+            return res.status(200).json({ status: true, newToken });
         };
         this.passwordUpdate = async (req, res) => {
-            const { password, phoneEmail, newPassword } = req.body;
-            const token = req.headers.authorization;
-            if (await search_user_service_1.default.searchUserService(token) === false) {
-                return res.status(403).json({ error: 'not enough rights' });
+            const { password, phoneEmail, newPassword, newToken } = req.body;
+            await incoming_data_validator_1.default.passwordUpdateInputData(req.body);
+            const updatePass = await this.capacityUser.userService.passwordUpdate(phoneEmail, password, newPassword, newToken);
+            if (!updatePass) {
+                throw new Error('token error');
             }
-            const loginUser = await this._userService.userService.servicePasswordUpdate(phoneEmail, password, newPassword, token);
-            return loginUser.status === true
-                ? res.status(200).json({ login: 'success', loginUser })
-                : res.status(403).json({ status: 'login error' });
+            return res.status(200).json({ login: 'success', updatePass, newToken });
         };
-        this._userService = userService;
+        this.capacityUser = userService;
     }
 };
 UserController = __decorate([

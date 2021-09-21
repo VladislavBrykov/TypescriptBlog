@@ -2,13 +2,13 @@ import Likes from '../../../Models/Likes.model';
 
 async function searchLikeDislikeUser(
     idPostComment: number,
-    phoneEmail: string,
+    userPhoneEmail: string,
     likeDislike: string,
     typeActionPostComment: string,
 ) {
     const searchAction = await Likes.findOne({
 
-        where: {idPostComment: idPostComment.toString(), phoneEmail},
+        where: {postId: idPostComment.toString(), userPhoneEmail},
         attributes: ['likeDislike'],
     });
     if (!searchAction) {
@@ -23,7 +23,7 @@ async function searchLikeDislikeUser(
     if (canCreate !== likeDislike) {
         await Likes.destroy({
             where: {
-                phoneEmail, typeActionPostComment, idPostComment: idPostComment.toString(), likeDislike,
+                userPhoneEmail, typeActionPostComment, postId: idPostComment.toString(), likeDislike,
             },
         });
         return true;

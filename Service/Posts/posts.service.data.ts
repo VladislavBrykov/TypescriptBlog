@@ -15,50 +15,39 @@ class PostService implements Posts {
     constructor() {
     }
 
-    async serviceuploadImage(
+    async uploadImage(
         id: string,
         image: string,
-    ): Promise<any> {
-        console.log('image-----------', image);
-        console.log("id-------------", id);
-        
+    ): Promise<string> {
         await Post.update({image}, {where: {id}});
         return image;
     }
-    
 
-    async serviceNewPost(
+    async newPost(
         title: string,
         body: string,
-        token: string,
-        // image: string,
         username: string,
-    ): Promise<any> {
-        const newToken = tokenCreator.newTokenCreator(username);
-        await UserDevice.update({token: newToken}, {where: {token}});
-
+    ): Promise<object> {
         const valueCreateNewPost = {
             title,
             body,
-            // image,
-            phoneEmail: username,
+            userPhoneEmail: username,
             countLikes: 0,
             countDisLikes: 0,
             countComments: 0,
         };
-        
+
         await Post.create(valueCreateNewPost);
         const bodyCreateNewPost = await Post.findAll({where: { title, body },});
         const resultCreateNewPost = {
             bodyCreateNewPost,
-            newToken,
         };
         return resultCreateNewPost;
     }
 
-    async serviceGetPosts(page: number, sort: string): Promise<any> { ///getPost
+    async getPosts(page: number, sort: string): Promise<object> { ///getPost
         const startIdPost: number = (page - 1) * 15;
-        if (sort === 'ASC') {          //!!!!!!xerocu
+        if (sort === 'ASC') {
             return Post.findAll({
                 offset: startIdPost,
                 limit: 15,
@@ -73,18 +62,16 @@ class PostService implements Posts {
         return {posts};
     }
 
-    async serviceNewComment(
+    async newComment(
         typeAction: string,
         id: number,
         token: string,
         comment: string,
-    ): Promise<any> {
+    ): Promise<object> {
         const username = await functionHelpers.searchUserService(token);
-        const newToken = tokenCreator.newTokenCreator(username);
-        await UserDevice.update({token: newToken}, {where: {token}});
         const createNewComment = {
             typeAction,
-            phoneEmail: username,
+            userPhoneEmail: username,
             postId: id.toString(),
             bodyComment: comment,
         };
@@ -93,60 +80,56 @@ class PostService implements Posts {
         return {
             createNewComment,
             success: 'comment create',
-            newToken,
         };
     }
 
-    async serviceNewLike(
+    async newLike(
         typeActionPostComment: string,
-        idPostComment: number,
-        token: string,
-        phoneEmail: string,
+        postId: number,
+        newToken: string,
+        userPhoneEmail: string,
         likeDislike: string,
-    ): Promise<any> {
-        const newToken = tokenCreator.newTokenCreator(phoneEmail);
-        await UserDevice.update({token: newToken}, {where: {token}});
+    ): Promise<object> {
         if (!await searchLikeDislikeUser(
-            idPostComment,
-            phoneEmail,
+            postId,
+            userPhoneEmail,
             likeDislike,
             typeActionPostComment,
         )) {
             await Likes.destroy({
                 where: {
-                    phoneEmail, typeActionPostComment, idPostComment: idPostComment.toString(), likeDislike,
+                    userPhoneEmail, typeActionPostComment, idPostComment: postId.toString(), likeDislike,
                 },
             });
-            await updateCountLikes(-1, idPostComment, likeDislike);
-            return {true: `${likeDislike} exists and be deleted`, newToken};
+            await updateCountLikes(-1, postId, likeDislike);
+            return {true: `${likeDislike} exists and be deleted`};
         }
         const createNewLIke = {
             typeActionPostComment,
-            idPostComment,
-            phoneEmail,
+            postId,
+            userPhoneEmail,
             likeDislike,
         };
         await Likes.create(createNewLIke);
-        await updateCountLikes(1, idPostComment, likeDislike);
-        return {true: `${likeDislike} create`, newToken};
+        await updateCountLikes(1, postId, likeDislike);
+        return {true: `${likeDislike} create`};
     }
 
-    async serviceDeletePost(
+    async deletePost(
         token: string,
         postId: number,
-    ): Promise<any> {
+    ): Promise<object> {
         await Post.destroy({where: {id: postId}});
         const username = await functionHelpers.searchUserService(token);
         const newToken = tokenCreator.newTokenCreator(username);
         await UserDevice.update({token: newToken}, {where: {token}});
-
         return {status: 'true', newToken};
     }
 
-    async serviceDeleteComment(
+    async deleteComment(
         token: string,
         commentId: number,
-    ): Promise<any> {
+    ): Promise<object> {
         await Comments.destroy({where: {idToDo: commentId.toString()}});
         const username = await functionHelpers.searchUserService(token);
         const newToken = tokenCreator.newTokenCreator(username);
@@ -156,23 +139,23 @@ class PostService implements Posts {
         return {status: 'true', newToken};
     }
 
-    async getPostById(postId: number): Promise<any> {
+    async getPostById(postId: number): Promise<object> {
         const post = await Post.findAll({
             where: {id: postId},
         });
         return {post};
     }
 
-    async getPostCommentsLikesById(postId: number): Promise<any> {
+    async getPostCommentsLikesById(postId: number): Promise<object> {
         const likes = await Likes.findAll({
             where: {
-                idPostComment: postId.toString(),
+                postId: postId.toString(),
                 likeDislike: 'like'
             },
         });
         const dislikes = await Likes.findAll({
             where: {
-                idPostComment: postId.toString(),
+                postId: postId.toString(),
                 likeDislike: 'dislike'
             },
         });

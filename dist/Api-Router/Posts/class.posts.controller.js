@@ -16,81 +16,94 @@ const inversify_1 = require("inversify");
 const types_1 = require("../../types");
 require("reflect-metadata");
 const rename_image_1 = __importDefault(require("../../Helpers/rename.image"));
-const incoming_data_validator_1 = require("../../Helpers/incoming.data.validator");
+const incoming_data_validator_1 = __importDefault(require("../../Helpers/incoming.data.validator"));
 let PostController = class PostController {
     constructor(postService) {
-        this.uploudImage = async (req, res) => {
+        this.uploadImage = async (req, res) => {
             const img = req.file;
             const { id } = req.params;
             const newImageName = rename_image_1.default(img.filename);
-            const createNewPost = await this._postService.postService.serviceuploadImage(id, newImageName);
-            return res.status(200).json({ createNewPost, status: 'new post is create' });
+            const uploadImage = await this.capacityPost.postService.uploadImage(id, newImageName);
+            if (!uploadImage) {
+                throw new Error('new post is not create');
+            }
+            return res.status(200).json({ uploadImage, status: 'new post is create' });
         };
         this.newPost = async (req, res) => {
-            const { title, body, phoneEmail } = req.body;
-            console.log("--------body", req.body);
-            console.log("--------headers", req.headers);
-            // const img = req.file;
-            // const newImageName = imageRenameForIdUser(img.filename);
-            const createNewPost = await this._postService.postService.serviceNewPost(title, body, req.headers.authorization, 
-            // newImageName,
-            phoneEmail);
-            return res.status(200).json({ createNewPost, status: 'new post is create' });
+            const { title, body, user, newToken } = req.body;
+            await incoming_data_validator_1.default.newPostInputData(req.body);
+            const createPost = await this.capacityPost.postService.newPost(title, body, user);
+            if (!createPost) {
+                throw new Error('new post is not create');
+            }
+            return res.status(200).json({ createPost, status: 'new post is create', newToken });
         };
         this.getPosts = async (req, res) => {
-            const { page } = req.query;
-            const { sort } = req.query;
-            const incomingDataValid = await incoming_data_validator_1.schema.validate(req.query);
-            if (incomingDataValid.error) {
-                return res.status(401).json({ error: incomingDataValid.error.details });
+            const { page, sort } = req.query;
+            await incoming_data_validator_1.default.getPostsInputData(req.query);
+            const allPosts = await this.capacityPost.postService.getPosts(Number(page), sort.toString());
+            if (!allPosts) {
+                throw new Error('posts not exists');
             }
-            const allPosts = await this._postService.postService.serviceGetPosts(Number(page), sort.toString());
             return res.status(200).json({ allPosts });
         };
         this.getPostId = async (req, res) => {
             const { id } = req.params;
-            const incomingDataValid = await incoming_data_validator_1.schema.validate(req.params);
-            if (incomingDataValid.error) {
-                return res.status(401).json({ error: incomingDataValid.error.details });
+            await incoming_data_validator_1.default.idInputData(req.params);
+            const informationByPostId = await this.capacityPost.postService.getPostById(Number(id.toString()));
+            if (!informationByPostId) {
+                throw new Error('you can\'t see this post');
             }
-            const postIdInformation = await this._postService.postService.getPostById(Number(id.toString()));
-            return res.status(200).json({ postIdInformation });
+            return res.status(200).json({ informationByPostId });
         };
-        this.getPostCommentsLikesId = async (req, res) => {
+        this.getReactionsById = async (req, res) => {
             const { id } = req.params;
-            const incomingDataValid = await incoming_data_validator_1.schema.validate(req.params);
-            if (incomingDataValid.error) {
-                return res.status(401).json({ error: incomingDataValid.error.details });
+            await incoming_data_validator_1.default.idInputData(req.params);
+            const reactionByPostId = await this.capacityPost.postService.getPostCommentsLikesById(Number(id.toString()));
+            if (!reactionByPostId) {
+                throw new Error('you can\'t see this post');
             }
-            const postIdInformation = await this._postService.postService.getPostCommentsLikesById(Number(id.toString()));
-            return res.status(200).json({ postIdInformation });
+            return res.status(200).json({ reactionByPostId });
         };
         this.newComment = async (req, res) => {
-            const { typeAction, id, comment } = req.body;
-            const createNewComment = await this._postService.postService.serviceNewComment(typeAction, id, req.headers.authorization, comment);
-            return res.status(200).json({ status: 'new comment is create', createNewComment });
+            const { typeAction, id, comment, newToken } = req.body;
+            await incoming_data_validator_1.default.newCommentInputData(req.params);
+            const createСomment = await this.capacityPost.postService.newComment(typeAction, id, newToken, comment);
+            if (!createСomment) {
+                throw new Error('you can\'t create new comment');
+            }
+            return res.status(200).json({ status: 'new comment is create', createСomment, newToken });
         };
         this.newLike = async (req, res) => {
-            const { typeActionPostComment, idPostComment, phoneEmail, likeDislike, } = req.body;
-            const resultCreateNewLike = await this._postService.postService.serviceNewLike(typeActionPostComment, idPostComment, req.headers.authorization, phoneEmail, likeDislike);
-            return res.status(200).json({ resultCreateNewLike });
+            const { typeActionPostComment, idPostComment, phoneEmail, likeDislike, newToken, } = req.body;
+            await incoming_data_validator_1.default.newLikeInputData(req.params);
+            const createLike = await this.capacityPost.postService.newLike(typeActionPostComment, idPostComment, newToken, phoneEmail, likeDislike);
+            if (!createLike) {
+                throw new Error('you can\'t create new like or dislike');
+            }
+            return res.status(200).json({ createLike, newToken });
         };
         this.deletePost = async (req, res) => {
-            console.log("params -------", req.params.id);
-            const deletedPost = await this._postService.postService.serviceDeletePost(req.headers.authorization, Number(req.params.id.toString()));
-            if (deletedPost) {
-                return res.status(200).json({ deletedPost });
+            const { newToken } = req.body;
+            const { id } = req.params;
+            await incoming_data_validator_1.default.idInputData(req.params);
+            const deletedPost = await this.capacityPost.postService.deletePost(newToken, Number(id.toString()));
+            if (!deletedPost) {
+                throw new Error('you can\'t deleted this post');
             }
-            return res.status(403).json({ status: 'you can\'t deleted this post' });
+            return res.status(200).json({ deletedPost });
         };
         this.deleteComment = async (req, res) => {
-            const deletedComment = await this._postService.postService.serviceDeleteComment(req.headers.authorization, Number(req.params));
-            if (deletedComment) {
-                return res.status(200).json({ status: 'comment be deleted', deletedComment });
+            const { newToken } = req.body;
+            const { id } = req.params;
+            await incoming_data_validator_1.default.idInputData(req.params);
+            const deletedComment = await this.capacityPost.postService.deleteComment(newToken, Number(id));
+            if (!deletedComment) {
+                throw new Error('you can\'t deleted this comment');
             }
-            return res.status(403).json({ status: 'you can\'t deleted this post' });
+            return res.status(200).json({ status: 'comment be deleted', newToken });
         };
-        this._postService = postService;
+        this.capacityPost = postService;
     }
 };
 PostController = __decorate([

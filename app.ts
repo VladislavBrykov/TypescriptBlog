@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended: true,
+  extended: true,
 }));
 
 app.use(cors());
@@ -21,5 +21,5 @@ const PORT = process.env.PORT || 3000;
 app.use('/api', apiRouter);
 
 app.listen(PORT, () => {
-    console.log(`server listen on port - ${PORT}`);
+  console.log(`server listen on port - ${PORT}`);
 });
